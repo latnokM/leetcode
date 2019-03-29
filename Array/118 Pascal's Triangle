@@ -20,7 +20,7 @@ public:
         vector<vector<int>> res;
         for(int i = 0; i < numRows; i++) {
             res.emplace_back(i + 1, 1);
-            for(int j = 1; j < i; j++)
+            for(int j = 1; j < i; j++)    //notice the boundry check j < i, the last in row is 1
                 res[i][j] = res[i - 1][j - 1] + res[i -1][j];
         }     
         return res;
