@@ -19,6 +19,7 @@ public:
         for(int i = 0; i < words.size(); ++i) {
             if(words[i] == word1) l1 = i;
             else if(words[i] == word2) l2 = i;
+            else continue;
             
             // found both locations
             if(l1 != -1 && l2 != -1)
