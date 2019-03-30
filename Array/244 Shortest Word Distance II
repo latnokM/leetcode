@@ -15,3 +15,36 @@ You may assume that word1 does not equal to word2, and word1 and word2 are both 
 //Since shortest() will be called many times, we don't want to go through whole list for each call, use hash table to save locations for
 //each different words in list
 
+class WordDistance {
+public:
+    WordDistance(vector<string> words) {
+        //store locations for each word into hash table
+        for(int i = 0; i < words.size(); ++i) {
+            locations[words[i]].push_back(i);
+        }
+    }
+    
+    int shortest(string word1, string word2) {
+        //find minDist between two sorted array
+        //use referece over copy will run faster
+        vector<int>& loc1 = locations[word1];
+        vector<int>& loc2 = locations[word2];
+        int i = 0, j = 0;
+        int minDist = INT_MAX;
+        
+        while(i < loc1.size() && j < loc2.size()) {
+            minDist = std::min(std::abs(loc1[i] - loc2[j]), minDist);
+            loc1[i] < loc2[j] ? i++ : j++;
+        }
+        return minDist;
+    }
+    
+private:
+    unordered_map<string, vector<int>> locations;    
+};
+
+/**
+ * Your WordDistance object will be instantiated and called as such:
+ * WordDistance* obj = new WordDistance(words);
+ * int param_1 = obj->shortest(word1,word2);
+ */
