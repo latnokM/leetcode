@@ -1,0 +1,45 @@
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Determine if you are able to reach the last index.
+
+Example 1:
+
+Input: [2,3,1,1,4]
+Output: true
+Explanation: Jump 1 step from index 0 to 1, then 3 steps to the last index.
+Example 2:
+
+Input: [3,2,1,0,4]
+Output: false
+Explanation: You will always arrive at index 3 no matter what. Its maximum
+             jump length is 0, which makes it impossible to reach the last index.
+
+This is a dynamic programming1 question. Usually, solving and fully understanding a dynamic programming problem is a 4 step process:
+
+Start with the recursive backtracking solution
+Optimize by using a memoization table (top-down dynamic programming)
+Remove the need for recursion (bottom-up dynamic programming)
+Apply final tricks to reduce the time / memory complexity
+All solutions presented below produce the correct result, but they differ in run time and memory requirements.
+
+1. backtracking  O(2^n)
+2. top-down  O(n^2)   recursion   good,bad,unkown
+3. bottom-up O(n^2)   iteration
+4. greedy O(n)
+
+
+//time O(n) space O(1)
+class Solution {
+public:
+    bool canJump(vector<int>& nums) {
+        //greedy, iterate from right to left, for each position, check if can reach the last good position
+        int lastPos = nums.size() - 1;
+        for(int i = nums.size() - 1; i >= 0; --i) {
+            if(i + nums[i] >= lastPos)
+                lastPos = i; 
+        }
+        return lastPos == 0;
+    }
+};
