@@ -1,0 +1,75 @@
+Given an array of integers, find out whether there are two distinct indices i and j in the array such that the absolute difference between nums[i] and nums[j] is at most t and the absolute difference between i and j is at most k.
+
+Example 1:
+
+Input: nums = [1,2,3,1], k = 3, t = 0
+Output: true
+Example 2:
+
+Input: nums = [1,0,1,1], k = 1, t = 2
+Output: true
+Example 3:
+
+Input: nums = [1,5,9,1,5,9], k = 2, t = 3
+Output: false
+
+//bucket sort & hash table time O(n) space O(min(k, n))
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        //bucket sort, check if two numbers are in same bucket of size t+1 or adjacent buckets
+        //sliding window to maintain distance k
+        if(t < 0 || k < 1) return false;
+        
+        unordered_map<long, long> buckets;
+        for(int i = 0; i < nums.size(); ++i) {
+            //get bucket ID, offset to start from INT_MIN
+            long num = (long)nums[i] - INT_MIN;
+            //each bucket of size t+1 has max abs diff of value t (0...t)
+            long bucket = num / ((long)t + 1);
+            //check if element in same bucket or adjacent buckets
+            if((buckets.count(bucket) == 1) || 
+               (buckets.count(bucket - 1) == 1 && num - buckets[bucket - 1] <= t) ||
+               (buckets.count(bucket + 1) == 1 && buckets[bucket + 1] - num <= t))
+                return true;
+            
+            //insert into bucket
+            buckets[bucket] = num;
+            
+            //maintain sliding window of k elements
+            if(buckets.size() > k) {
+                //find the bucket ID for nums[i - k]
+                bucket = ((long)nums[i - k] - INT_MIN) / ((long)t + 1);
+                buckets.erase(bucket);
+            }
+        }
+        return false;
+    }
+};
+
+//BST sliding window, time O(nlog(min(n,k))) space O(min(n,k))
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        //use BST as sliding window, elements in set are ordered
+        if(t < 0 || k < 1) return false;
+        
+        set<long> window;
+        for(int i = 0; i < nums.size(); ++i) {
+            //find if x in window that |x - n| <= t
+            //meet x >= n - t and x <= n + t, x overflow?
+            long num = nums[i];
+            
+            //find first element >= num - t
+            auto itlow = window.lower_bound(num - t);
+            if(itlow != window.end() && *itlow <= num + t) return true;
+            
+            window.insert(num);
+            
+            //maintain sliding window size
+            if(window.size() > k)
+                window.erase((long)nums[i - k]);
+        }
+        return false;        
+    }
+};
