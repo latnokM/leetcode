@@ -1,0 +1,67 @@
+Given n non-negative integers representing an elevation map where the width of each bar is 1, 
+compute how much water it is able to trap after raining.
+
+Example:
+
+Input: [0,1,0,2,1,0,1,3,2,1,2,1]
+Output: 6
+
+
+//DP, time O(n) space O(n)
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        //DP, save the max height from left and right for given point.        
+        int res(0), size(height.size());
+        if(size < 3) return 0;
+        
+        vector<int> max_left(size, 0);
+        vector<int> max_right(size, 0);
+        max_left[0] = height[0];
+        max_right[size - 1] = height[size - 1];
+        
+        //update max height at left
+        for(int i = 1; i < size; ++i)
+            max_left[i] = std::max(height[i], max_left[i - 1]);
+        //update max height at right
+        for(int i = size - 2; i >= 0; --i) 
+            max_right[i] = std::max(height[i], max_right[i + 1]);
+        
+        //calculate trap water for each bar 
+        // trapWater[i] = min(max_left[i], max_right[i]) - height[i]
+        for(int i = 0; i < size; ++i) {
+            res += std::min(max_left[i], max_right[i]) - height[i];
+        }
+        return res;
+    }
+};
+
+// two pointer, time O(n) space O(1)
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        if(height.size() < 3) return 0;
+        //two pointer
+        int left(0), right(height.size() - 1), res(0);
+        int left_max(height[left]), right_max(height[right]);
+        while(left < right) {
+            //depend on left_max
+            if(height[left] <= height[right]) {
+                if(height[left] >= left_max)
+                    left_max = height[left];
+                else
+                    res += left_max - height[left];
+                left++;
+            }
+            //depend on right_max
+            else {
+                if(height[right] >= right_max)
+                    right_max = height[right];
+                else
+                    res += right_max - height[right];
+                right--;
+            }
+        }
+        return res;
+    }
+};
