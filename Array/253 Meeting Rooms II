@@ -1,0 +1,83 @@
+Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), find the minimum number of conference rooms required.
+
+Example 1:
+
+Input: [[0, 30],[5, 10],[15, 20]]
+Output: 2
+Example 2:
+
+Input: [[7,10],[2,4]]
+Output: 1
+
+
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+
+//O(nlogn)/O(n)
+class compare {
+public:
+    bool operator() (Interval a, Interval b) {
+        return (a.end > b.end);
+    }    
+};
+
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        //use priority queue with key of end time
+        if(intervals.empty()) return 0;
+        
+        priority_queue<Interval, vector<Interval>, compare> pq;
+        sort(intervals.begin(), intervals.end(), [](Interval a, Interval b){ return a.start < b.start; });
+        
+        pq.push(intervals[0]);
+        for(int i = 1; i < intervals.size(); ++i) {
+            //find a free room
+            if(intervals[i].start >= pq.top().end)
+                pq.pop();
+                
+            pq.push(intervals[i]);
+        }
+        return pq.size();        
+    }
+};
+
+
+//Chronological Ordering O(nlogn)
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        if(intervals.empty()) return 0;
+        
+        vector<int> start, end;
+        for(auto i : intervals) {
+            start.push_back(i.start);
+            end.push_back(i.end);
+        }
+        sort(start.begin(), start.end());
+        sort(end.begin(), end.end());
+        
+        int ps(0), pe(0);
+        for(; ps < start.size(); ++ps) {
+            if(start[ps] >= end[pe])
+                pe++;
+        }
+        return ps - pe;
+    }
+};
