@@ -1,0 +1,57 @@
+Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
+
+Example:
+
+Input: [-2,1,-3,4,-1,2,1,-5,4],
+Output: 6
+Explanation: [4,-1,2,1] has the largest sum = 6.
+Follow up:
+
+If you have figured out the O(n) solution, try coding another solution using the divide and conquer approach, which is more subtle.
+
+
+//O(n) Kadane's Algo
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        //DP, calc max subarray containing curr number, track max_so_far
+        if(nums.empty()) return 0;
+        int curr_max(nums[0]), max_so_far(nums[0]);
+        for(int i = 1; i < nums.size(); ++i) {
+            curr_max = max(curr_max + nums[i], nums[i]);
+            max_so_far = max(max_so_far, curr_max);
+        }
+        return max_so_far;        
+    }
+};
+
+//DP, divide and conquer O(nlogn)
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        return maxSubArray(nums, 0, nums.size() - 1);
+    }
+    
+private:
+    int maxSubArray(vector<int>& nums, int l, int r) {
+        if(l > r)
+            return INT_MIN;  //Don't return 0 here!
+        //maxSubArray in left half, right half or across middle
+        int m = (l + r) / 2;
+        int lmax = maxSubArray(nums, l, m - 1);
+        int rmax = maxSubArray(nums, m + 1, r);
+        
+        int ml(0), mr(0);
+        //calculate max sum from middle moving to both ends
+        for(int i = m - 1, sum = 0; i >= l; --i) {
+            sum += nums[i];
+            ml = max(ml, sum);
+        }
+        for(int j = m + 1, sum = 0; j <= r; ++j) {
+            sum += nums[j];
+            mr = max(mr, sum);
+        }
+        
+        return max(max(lmax, rmax), ml + mr + nums[m]);
+    }
+};
