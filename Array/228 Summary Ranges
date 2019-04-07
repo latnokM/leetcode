@@ -1,0 +1,66 @@
+Given a sorted integer array without duplicates, return the summary of its ranges.
+
+Example 1:
+
+Input:  [0,1,2,4,5,7]
+Output: ["0->2","4->5","7"]
+Explanation: 0,1,2 form a continuous range; 4,5 form a continuous range.
+Example 2:
+
+Input:  [0,2,3,4,6,8,9]
+Output: ["0","2->4","6","8->9"]
+Explanation: 2,3,4 form a continuous range; 8,9 form a continuous range.
+
+//method 1
+class Solution {
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        vector<string> res;
+        //track range index [i, j]
+        for(int i = 0, j = 0; j < nums.size(); ++j) {
+            //check if j + 1 extends range
+            if(j + 1 < nums.size() && nums[j + 1] == nums[j] + 1)
+                continue;
+            //current range ends
+            if(i == j)
+                res.push_back(to_string(nums[j]));
+            else
+                res.push_back(to_string(nums[i]) + "->" + to_string(nums[j]));
+            i = j + 1;
+        }
+        return res;
+    }
+};
+
+//method 2
+class Solution {
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        if(nums.empty()) return {};
+        
+        string cur(to_string(nums[0]));
+        vector<string> res;
+        bool open(false);
+        
+        for(int i = 1; i < nums.size(); ++i) {
+            if(nums[i] == nums[i - 1] + 1) {
+                if(!open) {
+                    cur += "->";
+                    open = true;
+                }
+            }
+            else {
+                if(open) {
+                    cur += to_string(nums[i - 1]);
+                    open = false;
+                } 
+                res.push_back(cur);
+                cur = to_string(nums[i]);
+            }           
+        }
+        if(open)
+            cur += to_string(nums.back());
+        res.push_back(cur);
+        return res;        
+    }
+};
