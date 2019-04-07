@@ -1,0 +1,50 @@
+Given an array of n positive integers and a positive integer s, find the minimal length of a contiguous subarray of which the sum ≥ s. If there isn't one, return 0 instead.
+
+Example: 
+
+Input: s = 7, nums = [2,3,1,2,4,3]
+Output: 2
+Explanation: the subarray [4,3] has the minimal length under the problem constraint.
+Follow up:
+If you have figured out the O(n) solution, try coding another solution of which the time complexity is O(n log n). 
+
+
+
+//binary search, O(nlogn)
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums) {   
+        //sum[] store sum of first n elements, so size is n + 1
+        int n(nums.size()), minLen(INT_MAX);
+        vector<int> sum(n + 1, 0);
+        //update sum[], sum[0] = 0
+        for(int i = 1; i <= n; ++i)
+            sum[i] = sum[i - 1] + nums[i - 1];
+        
+        //sum[] is sorted array, start from end to begin, if sum[i] < s, stop 
+        for(int i = n; i > 0 && sum[i] >= s; --i) {
+            //for each i, binary search to find largest j that sum[i] - sum[j] >= s
+            //equivalent to find smallest j that sum[i] - sum[j] < s, thus j need to be in subarray
+            int j = upper_bound(sum.begin(), sum.end(), sum[i] - s) - sum.begin();
+            minLen = min(minLen, i - j + 1);
+        }
+        return (minLen == INT_MAX) ? 0 : minLen;
+    }
+};
+
+//two pointer, O(n)
+class Solution {
+public:
+    int minSubArrayLen(int s, vector<int>& nums) {
+        //two pointer, move r to right until sum >= s, then move l to get min len
+        int l(0), r(0), n(nums.size()), len(INT_MAX), sum(0);
+        while(r < n) {
+            sum += nums[r++];
+            while(sum >= s) {
+                len = min(len, r - l);
+                sum -= nums[l++];
+            }
+        }
+        return (len == INT_MAX) ? 0 : len;        
+    }
+};
