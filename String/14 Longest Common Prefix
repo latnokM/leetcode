@@ -1,0 +1,60 @@
+Write a function to find the longest common prefix string amongst an array of strings.
+
+If there is no common prefix, return an empty string "".
+
+Example 1:
+
+Input: ["flower","flow","flight"]
+Output: "fl"
+Example 2:
+
+Input: ["dog","racecar","car"]
+Output: ""
+Explanation: There is no common prefix among the input strings.
+Note:
+
+All given inputs are in lowercase letters a-z.
+
+//O(S), S = num of chars for all strings
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        //horizontal scan, LCP(s1,s2,s3..) = LCP(LCP(LCP(s1,s2)s3)s4)
+        if(strs.empty()) return "";
+        
+        int len(strs[0].size());
+        
+        for(int i = 1; i < strs.size(); ++i) {
+            len = min(len, (int)strs[i].size());
+            for(int j = 0; j < len; ++j) {
+                if(strs[i][j] != strs[0][j]) {
+                    len = j;
+                    break;
+                }
+            }
+        }
+        return strs[0].substr(0, len);        
+    }
+};
+
+//O(s), S= sum of chars for all strings, best case better, n*minLen comparisons
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        //vertical scan, compare ith char for all strings
+        if(strs.empty()) return "";
+        
+        int len(strs[0].size());
+        for(int i = 0; i < len; ++i) {
+            char c(strs[0][i]);
+            for(int j = 1; j < strs.size(); ++j) {
+                if((strs[j].size() < i + 1) || strs[j][i] != c) {
+                    len = i;
+                    break;
+                }
+            }
+        }
+        return strs[0].substr(0, len);
+    }
+};
+
