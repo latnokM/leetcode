@@ -1,0 +1,61 @@
+Given an input string, reverse the string word by word.
+
+Example 1:
+
+Input: "the sky is blue"
+Output: "blue is sky the"
+Example 2:
+
+Input: "  hello world!  "
+Output: "world! hello"
+Explanation: Your reversed string should not contain leading or trailing spaces.
+Example 3:
+
+Input: "a good   example"
+Output: "example good a"
+Explanation: You need to reduce multiple spaces between two words to a single space in the reversed string.
+ 
+
+Note:
+
+A word is defined as a sequence of non-space characters.
+Input string may contain leading or trailing spaces. However, your reversed string should not contain leading or trailing spaces.
+You need to reduce multiple spaces between two words to a single space in the reversed string.
+
+
+class Solution {
+public:
+    void reverse(string &s, int start, int end) {
+        while(start < end)
+            swap(s[start++], s[end--]);
+    }
+    
+    string reverseWords(string s) {
+        //trim leading and trailing spaces
+        int found = s.find_first_not_of(' ');
+        if(found != string::npos)
+            s.erase(0, found);
+        found = s.find_last_not_of(' ');
+        if(found != string::npos)
+            s.erase(found + 1, s.size() - 1 - found);
+        
+        //reverse words, remove excessive spaces between words
+        int start(0);
+        while(start < s.size()) {
+            int end = s.find_first_of(' ', start);
+            if(end == string::npos) {
+                reverse(s, start, s.size() - 1);
+                break;
+            }
+            reverse(s, start, end - 1);
+            start = s.find_first_not_of(' ', end);
+            int len = start - end - 1;
+            s.erase(end, len); 
+            start -= len;
+        }
+        
+        //reverse whole string
+        reverse(s, 0, s.size() - 1);  
+        return s;
+    }
+};
