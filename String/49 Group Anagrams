@@ -1,0 +1,60 @@
+Given an array of strings, group anagrams together.
+
+Example:
+
+Input: ["eat", "tea", "tan", "ate", "nat", "bat"],
+Output:
+[
+  ["ate","eat","tea"],
+  ["nat","tan"],
+  ["bat"]
+]
+Note:
+
+All inputs will be in lowercase.
+The order of your output does not matter.
+
+//sort with hash, O(nKlogK)
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        //use hash table, take sorted str as key, store anagrams str to value
+        unordered_map<string, vector<string>> map;
+        for(string s : strs) {
+            string t(s);
+            sort(t.begin(), t.end());
+            map[t].push_back(s);
+        }
+        
+        vector<vector<string>> res;
+        for(auto entry : map)
+            res.push_back(entry.second);
+        return res;
+    }
+};
+
+// count sort key, O(nK)
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        //use hash table, count sort create string count number of each 26 letters
+        unordered_map<string, vector<string>> map;
+        //O(n)
+        for(string s : strs) {
+            vector<int> count(26);
+            //O(K)
+            for(char c : s)
+                count[c - 'a']++;
+            string t;
+            for(int num : count)
+                t += '#' + to_string(num);
+            map[t].push_back(s);
+        }
+        
+        vector<vector<string>> res;
+        for(auto entry : map) 
+            res.push_back(entry.second);
+        
+        return res;
+    }
+};
