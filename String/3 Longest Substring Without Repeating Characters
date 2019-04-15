@@ -1,0 +1,37 @@
+Given a string, find the length of the longest substring without repeating characters.
+
+Example 1:
+
+Input: "abcabcbb"
+Output: 3 
+Explanation: The answer is "abc", with the length of 3. 
+Example 2:
+
+Input: "bbbbb"
+Output: 1
+Explanation: The answer is "b", with the length of 1.
+Example 3:
+
+Input: "pwwkew"
+Output: 3
+Explanation: The answer is "wke", with the length of 3. 
+             Note that the answer must be a substring, "pwke" is a subsequence and not a substring.
+             
+//sliding window, unordered_map, O(n)
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        //unordered_map to store last index of char
+        int max_len(0);
+        unordered_map<char, int> map;
+        for(int i = 0, j = 0; j < s.size(); ++j) {
+            //[i, j] is current substr
+            if(map.find(s[j]) != map.end() && map[s[j]] >= i)
+                i = map[s[j]] + 1;            
+           
+            max_len = max(max_len, j - i + 1);
+            map[s[j]] = j;
+        }
+        return max_len;
+    }
+};
