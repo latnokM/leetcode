@@ -1,0 +1,31 @@
+A strobogrammatic number is a number that looks the same when rotated 180 degrees (looked at upside down).
+
+Find all strobogrammatic numbers that are of length = n.
+
+Example:
+
+Input:  n = 2
+Output: ["11","69","88","96"]
+
+//recursive, O(c^n)
+class Solution {
+public:
+    vector<string> findStrobogrammatic(int n) {
+        return helper(n, n); 
+    }
+    
+    vector<string> helper(int m, int n) {
+        if(m == 0) return {""};   //cannot be {}, need a empty string to iterate
+        if(m == 1) return {"0", "1", "8"};
+        
+        vector<string> tmp = helper(m - 2, n), res;
+        for(auto s : tmp) {
+            if(m != n) res.push_back("0" + s + "0");  //first digit cannot be 0
+            res.push_back("1" + s + "1");
+            res.push_back("8" + s + "8");
+            res.push_back("6" + s + "9");
+            res.push_back("9" + s + "6");
+        }
+        return res;
+    }
+};
