@@ -1,0 +1,58 @@
+Find the length of the longest substring T of a given string (consists of lowercase letters only) such that every 
+character in T appears no less than k times.
+
+Example 1:
+
+Input:
+s = "aaabb", k = 3
+
+Output:
+3
+
+The longest substring is "aaa", as 'a' is repeated 3 times.
+Example 2:
+
+Input:
+s = "ababbc", k = 2
+
+Output:
+5
+
+The longest substring is "ababb", as 'a' is repeated 2 times and 'b' is repeated 3 times.
+
+//divide conquer, recursive, O(n)
+class Solution {
+public:
+    int longestSubstring(string s, int k) {
+        //divide conquer, O(n), at most 26 DC
+        return helper(s, 0, s.size() - 1, k);        
+    }
+    
+    int helper(string s, int l, int r, int k) {
+        //find longest substr in [l, r]
+        //count all characters in range
+        vector<int> count(26, 0);
+        for(int i = l; i <= r; ++i)
+            count[s[i] - 'a']++;
+        
+        //base case is whole substr meet requirement
+        bool pass(true);
+        for(auto i : count) {
+            if(i && i < k) {
+                pass = false;
+                break;
+            }
+        }
+        if(pass) return r - l + 1;
+        
+        //divide string using all char with occurrence > 0 and < k
+        int max_len(0), i(l);
+        for(int j = l; j <= r; ++j) {
+            if(count[s[j] - 'a'] && count[s[j] - 'a'] < k) {
+                max_len = max(max_len, helper(s, i, j - 1, k));
+                i = j + 1;
+            }
+        }
+        return max(max_len, helper(s, i, r, k));  //have not checked last substr yet
+    }
+};
