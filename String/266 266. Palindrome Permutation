@@ -1,0 +1,34 @@
+Given a string, determine if a permutation of the string could form a palindrome.
+
+Example 1:
+
+Input: "code"
+Output: false
+Example 2:
+
+Input: "aab"
+Output: true
+Example 3:
+
+Input: "carerac"
+Output: true
+
+//O(n)
+class Solution {
+public:
+    bool canPermutePalindrome(string s) {
+        //at most one char can occur odd times
+        //count frequency
+        unordered_map<char, int> map;
+        for(char c : s)
+            map[c]++;
+        
+        //at most one odd value, even %2 == 0, odd %2 == 1
+        int odd(0);
+        for(auto entry : map)
+            odd += entry.second % 2;
+        
+        return odd <= 1;
+    }
+};
+
