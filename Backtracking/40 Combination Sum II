@@ -38,20 +38,17 @@ public:
     
     void findCombSum(vector<int> &candidates, int start, int target, 
                      vector<int> &comb, vector<vector<int>> &res) {
-        if(target < 0) return;
-        else if(target == 0) {
+        if(target == 0) {
             res.push_back(comb);
             return;
         }
         
-        for(int i = start; i < candidates.size(); ++i) {
+        for(int i = start; i < candidates.size() && candidates[i] <= target; ++i) {
             //dup can only use once
             if(i == start || candidates[i] != candidates[i - 1]) {
                 comb.push_back(candidates[i]);
-                target -= candidates[i];
-                findCombSum(candidates, i + 1, target, comb, res);
+                findCombSum(candidates, i + 1, target - candidates[i], comb, res);
                 comb.pop_back();
-                target += candidates[i];
             }
         }
     }
