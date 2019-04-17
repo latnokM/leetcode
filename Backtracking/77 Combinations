@@ -1,0 +1,36 @@
+Given two integers n and k, return all possible combinations of k numbers out of 1 ... n.
+
+Example:
+
+Input: n = 4, k = 2
+Output:
+[
+  [2,4],
+  [3,4],
+  [2,3],
+  [1,2],
+  [1,3],
+  [1,4],
+]
+
+class Solution {
+public:
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>> res;
+        vector<int> comb;
+        findComb(n, 1, k, comb, res);
+        return res;        
+    }
+    
+    void findComb(int n, int start, int size, vector<int> &comb, vector<vector<int>> &res) {
+        if(comb.size() == size) {
+            res.push_back(comb);
+            return;
+        }
+        for(int i = start; i <= n; ++i) {
+            comb.push_back(i);
+            findComb(n, i + 1, size, comb, res);
+            comb.pop_back();
+        }
+    }
+};
