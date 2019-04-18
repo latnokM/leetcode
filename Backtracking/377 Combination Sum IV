@@ -31,7 +31,7 @@ public:
     int combinationSum4(vector<int>& nums, int target) {
         //for every num = target - num, we can reach target by adding this num, 
         //comb[target] += comb[target - num] for all valid num
-        vector<int> count(target + 1); //store comb count for 0, 1...target
+        vector<unsigned int> count(target + 1); //store comb count for 0, 1...target
         count[0] = 1;
         for(int i = 1; i <= target; ++i) {
             for(int num : nums) {
