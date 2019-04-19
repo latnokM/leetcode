@@ -1,0 +1,64 @@
+Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters.
+
+Example:
+
+Input: "23"
+Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+Note:
+
+Although the above answer is in lexicographical order, your answer could be in any order you want.
+
+//backtracking, O(3^N*4^M)
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if(digits.empty()) return {};
+        vector<string> combs;
+        string comb;
+        getCombination(digits, 0, comb, combs);
+        return combs;
+    }
+    
+    void getCombination(string &digits, int start, string &comb, vector<string> &combs) {
+        if(comb.size() == digits.size()) {
+            //done for this comb
+            combs.push_back(comb);
+            return;
+        }
+        
+        for(int i = start; i < digits.size(); ++i) {
+            string tmp = map[digits[i] - '2'];
+            for(char c : tmp) {
+                comb.push_back(c);
+                getCombination(digits, i + 1, comb, combs);
+                comb.pop_back();
+            }
+        }
+    } 
+private:
+    vector<string> map = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+};
+
+
+//interation
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if(digits.empty()) return {};
+        vector<string> mapping = {"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        vector<string> res = {""};
+        for(char i : digits) {     //O(n)
+            string chars = mapping[i - '2'];
+            vector<string> tmp;
+            for(char j : chars) {    
+                for(int k = 0; k < res.size(); k++) {
+                    tmp.push_back(res[k] + j);
+                }
+            }
+            res = tmp;
+        }
+        return res;
+    }
+};
