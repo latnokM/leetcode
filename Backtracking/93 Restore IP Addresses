@@ -1,0 +1,66 @@
+Given a string containing only digits, restore it by returning all possible valid IP address combinations.
+
+Example:
+
+Input: "25525511135"
+Output: ["255.255.11.135", "255.255.111.35"]
+
+//O(1)
+class Solution {
+public:
+    vector<string> restoreIpAddresses(string s) {
+        //IP addr formed by 4 parts, each with len 1-3
+        //iterate all possible parts len combination
+        vector<string> res;
+        for(int a = 1; a <= 3; a++) {
+            for(int b = 1; b <= 3; ++b) {
+                for(int c = 1; c <= 3; ++c) {
+                    for(int d = 1; d <= 3; ++d) {
+                        if(a + b + c + d == s.size()) {
+                            //each parts should not larger than 255
+                            int A = stoi(s.substr(0, a));
+                            int B = stoi(s.substr(a, b));
+                            int C = stoi(s.substr(a + b, c));
+                            int D = stoi(s.substr(a + b + c, d));
+                            if(A <= 255 && B <= 255 && C <= 255 && D <= 255) {
+                                //valid IP
+                                string tmp = to_string(A) + '.' + to_string(B) + '.'
+                                              + to_string(C) + '.' + to_string(D);
+                                if(tmp.size() == s.size() + 3)
+                                    res.push_back(tmp);   //ignore leading 0(001.1.1.1)
+                            }       
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
+
+//backtrack
+class Solution {
+public:
+    vector<string> restoreIpAddresses(string s) {
+        vector<string> res;
+        string ip;
+        getIP(s, 0, 0, ip, res);
+        return res;        
+    }
+    
+    void getIP(string s, int start, int count, string ip, vector<string> &res) {
+        if(count == 4 && start == s.size()) {
+            ip.pop_back();   //remove last '.'
+            res.push_back(ip);
+        }
+        //check if remaining len is too short or too long
+        int remain = s.size() - start;
+        if(remain > (4 - count) * 3 || remain < (4 - count)) return;
+        for(int i = 1; i <= 3; ++i) {
+            if(i > remain) return;
+            string cur = s.substr(start, i);
+            if((cur[0] == '0' && cur.size() > 1) || stoi(cur) > 255) return;
+            getIP(s, start + i, count + 1, ip + cur + '.', res);
+        }
+    }
+};
