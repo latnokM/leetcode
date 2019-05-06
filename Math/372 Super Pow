@@ -1,0 +1,46 @@
+Your task is to calculate ab mod 1337 where a is a positive integer and b is an extremely large positive integer given 
+in the form of an array.
+
+Example 1:
+
+Input: a = 2, b = [3]
+Output: 8
+Example 2:
+
+Input: a = 2, b = [1,0]
+Output: 1024
+
+One knowledge: ab % k = (a%k)(b%k)%k
+Since the power here is an array, we'd better handle it digit by digit.
+One observation:
+a^1234567 % k = (a^1234560 % k) * (a^7 % k) % k = (a^123456 % k)^10 % k * (a^7 % k) % k
+Looks complicated? Let me put it other way:
+Suppose f(a, b) calculates a^b % k; Then translate above formula to using f :
+f(a,1234567) = f(a, 1234560) * f(a, 7) % k = f(f(a, 123456),10) * f(a,7)%k;
+
+
+class Solution {
+public:
+    int superPow(int a, vector<int>& b) {
+        // (ab) %k = (a%k * b%k)%k
+        if (b.empty()) return 1;
+        
+        int digit = b.back();
+        b.pop_back();
+        return (powerMod(superPow(a, b), 10) * powerMod(a, digit)) % base;
+    }
+    
+private:
+    const int base = 1337;
+    int powerMod(int a, int k) {
+        //a^k % base, 0 <= k <= 10
+        int res = 1;
+        a %= base;
+        
+        for (int i = 0; i < k; ++i) {
+            res = (res * a) % base;
+        }
+        return res;
+    }
+    
+};
