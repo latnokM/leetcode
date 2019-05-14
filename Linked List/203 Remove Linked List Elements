@@ -1,0 +1,26 @@
+Remove all elements from a linked list of integers that have value val.
+
+Example:
+
+Input:  1->2->6->3->4->5->6, val = 6
+Output: 1->2->3->4->5
+
+
+//O(n)
+class Solution {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+        ListNode dummy(0);
+        ListNode *prev = &dummy, *cur = head;
+        dummy.next = head;
+        while (cur) {
+            if (cur->val == val)
+                prev->next = cur->next;
+            else
+                prev = prev->next;
+            
+            cur = cur->next;
+        }
+        return dummy.next;
+    }
+};
