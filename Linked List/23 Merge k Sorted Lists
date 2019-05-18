@@ -1,0 +1,115 @@
+Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+
+Example:
+
+Input:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+Output: 1->1->2->3->4->4->5->6
+
+//merge sort, time O(Nlgk), space O(1)
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if (lists.empty()) return NULL;
+        //merge sort
+        return partition(lists, 0, lists.size() - 1);
+    }
+    
+private:
+    //O(Nlogk) 
+    ListNode* partition(vector<ListNode*> & lists, int left, int right) {
+        if (left == right) return lists[left];
+        
+        int mid = (left + right) / 2;
+        ListNode *l1 = partition(lists, left, mid);
+        ListNode *l2 = partition(lists, mid + 1, right);
+        return merge(l1, l2);
+    }
+    
+    //merge two lists, O(n), space O(1)
+    ListNode *merge(ListNode *l1, ListNode *l2) {
+        ListNode dummy(0);
+        ListNode *prev = &dummy;
+        while (l1 && l2) {
+            if (l1->val < l2->val) {
+                prev->next = l1;
+                l1 = l1->next;
+            } else {
+                prev->next = l2;
+                l2 = l2->next;
+            }
+            prev = prev->next;
+        }
+        prev->next = l1 ? l1 : l2;
+        return dummy.next;
+    }
+};
+
+
+
+//priority queue, O(Nlgk), space(k)
+class Solution {
+public:
+    struct compare {
+        bool operator() (const ListNode* a, const ListNode* b) {
+            return a->val > b->val;
+        }
+    };
+    
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        //priority queue
+        priority_queue<ListNode*, vector<ListNode*>, compare> pq;
+        for (auto l : lists) {
+            if (l)  pq.push(l);
+        }
+           
+        if (pq.empty()) return NULL;
+        ListNode *res =  pq.top();
+        pq.pop();
+        if (res->next) pq.push(res->next);
+        ListNode *cur = res;
+        while (!pq.empty()) {
+            cur->next = pq.top();
+            pq.pop();
+            cur = cur->next;
+            if (cur->next) pq.push(cur->next);
+        }
+        return res;        
+    }
+};
+
+//heap, O(Nlgk), space O(k)
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        //heap, underlying vector
+        vector<ListNode*> v;
+        for (auto l : lists) {
+            if (l) v.push_back(l);
+        }  
+        if (v.empty()) return NULL;
+        
+        auto compare = [](ListNode* a, ListNode* b) { return a->val > b->val; };
+        //vector -> heap
+        make_heap(v.begin(), v.end(), compare);
+        
+        ListNode dummy(0);
+        ListNode *cur = &dummy;
+        
+        while (v.size()) {
+            cur->next = v.front();
+            pop_heap(v.begin(), v.end(), compare);
+            v.pop_back();
+            cur = cur->next;
+            if (cur->next) {
+                v.push_back(cur->next);
+                push_heap(v.begin(), v.end(), compare);
+            }
+        }
+        return dummy.next;        
+    }
+};
