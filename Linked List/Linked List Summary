@@ -1,0 +1,41 @@
+use dummy node if head might be modified.
+
+Remove node from list:
+237 Delete Node in a Linked List - we don't have access to prev node, replace cur node value to next value and delete next node, timeO(1)
+203 Remove Linked List Elements - remove all node with specific value, dummy node, prev/cur, O(n)/O(1)
+19 Remove Nth Node From End of List - two pointers, dummy node, O(n)/O(1)
+83 Remove Duplicates from Sorted List - remove cur->next is duplicate, O(n)/O(1)
+82 Remove Duplicates from Sorted List II - remove all duplicates, dummy node, O(n)/O(1)
+
+Merge lists:
+21 Merge Two Sorted Lists - dummy node, O(n)/O(1)
+23 Merge k Sorted Lists - merge sort - O(Nlgk)/O(1), partition/merge two lists
+                        - priority_queue/heap - O(Nlgk)/O(k)
+                        - merge list one by one - O(Nk)/O(1)
+148 Sort List - merge sort top-down, cut list in half, sort both halfs then merge, O(nlgn)/O(lgn)
+              - merge sort bottom-up(interative), dummy node, get size, for(step <<= 1), split list into two lists, first contain first
+                n nodes, return head of second list, merge two sorted list, append merged sorted list to head, return tail of merged list
+
+Reverse linked list:
+206 Reverse Linked List - prev, cur, next
+92 Reverse Linked List II - reverse portion of list, dummy node
+    fisrt locate the node before m-th node (prev) and the m-th node (cur), then move cur->next to be after prev for n-m times
+    time O(n), one pass, space O(1)
+24 Swap Nodes in Pairs - dummy node, prev->first->second O(n)/O(1)
+25 Reverse Nodes in k-Group - dummy node, get size, prev/cur/next. O(n)/O(1)
+
+Linked List Cycle:
+141 Linked List Cycle
+142 Linked List Cycle II - find intersection node
+Hash table - time O(n) space O(n)
+Two pointer - time O(n) space O(n)
+
+328 Odd Even Linked List - two pointer, O(n)/O(1)
+369 Plus One Linked List - dummy(new), find the last non-9 node, update node after i to 0
+2 Add Two Numbers - dummy(new), carry - what if MSB is at front? reverse or use stack
+160 Intersection of Two Linked Lists - hash table O(m+n)/O(m). two pointer - iterate both list, if no intersection, meet at tail as NULL
+234 Palindrome Linked List - reverse half list and compare, O(n)/O(1)
+143 Reorder List - find middle node, reverse second half, merge two lists, O(n)/O(1)
+61 Rotate List - get list size, circle the list to a loop, find location of new head k%size, O(n)/O(1)
+86 Partition List - two dummy nodes, O(n)/O(1)
+147 Insertion Sort List - dummy node, prev/cur/next, move cur to between prev and prev->next O(n^2)/O(1)
