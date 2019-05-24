@@ -1,0 +1,88 @@
+Given a binary tree, return the preorder traversal of its nodes' values.
+
+Example:
+
+Input: [1,null,2,3]
+   1
+    \
+     2
+    /
+   3
+
+Output: [1,2,3]
+Follow up: Recursive solution is trivial, could you do it iteratively?
+
+//recursive O(n)/O(n)
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> res;
+        preorder(res, root);
+        return res;
+    }
+    
+    void preorder(vector<int> &res, TreeNode *node) {
+        if (!node) return;
+        res.push_back(node->val);
+        preorder(res, node->left);
+        preorder(res, node->right);
+    }
+};
+
+
+//iterative, stack-based O(n)/O(n)
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        //iterative using stack
+        if (!root) return {};
+        
+        vector<int> res;
+        stack<TreeNode*> stack;
+        stack.push(root);
+        while (!stack.empty()) {
+            TreeNode *cur = stack.top();
+            stack.pop();
+            res.push_back(cur->val);
+            if (cur->right) stack.push(cur->right);
+            if (cur->left) stack.push(cur->left);
+        }
+        return res;
+    }
+};
+
+//morris traversal, O(n)/O(1)
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        //morris traversal
+        if (!root) return {};
+        
+        vector<int> res;
+        TreeNode *pre = NULL, *cur = root;
+        while (cur) {
+            if (cur->left == NULL) {
+                //no left subtree, print cur and go to right child
+                res.push_back(cur->val);
+                cur = cur->right;
+            } else {
+                //find inorder predecessor of cur in left subtree
+                pre = cur->left;
+                while (pre->right != NULL && pre->right != cur)
+                    pre = pre->right;
+                
+                if (pre->right == NULL) {
+                    //link predecessor to cur and visit cur, and go to left child
+                    res.push_back(cur->val);
+                    pre->right = cur;
+                    cur = cur->left;
+                } else {
+                    //done visiting left subtree, restore the tree
+                    pre->right = NULL;
+                    cur = cur->right;
+                }
+            }
+        }
+        return res;
+    }
+};
