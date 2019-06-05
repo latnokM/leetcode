@@ -1,0 +1,57 @@
+Given a binary tree, return the postorder traversal of its nodes' values.
+
+Example:
+
+Input: [1,null,2,3]
+   1
+    \
+     2
+    /
+   3
+
+Output: [3,2,1]
+Follow up: Recursive solution is trivial, could you do it iteratively?
+
+//recursive, O(n)/O(n)
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        //recursive
+        vector<int> res;
+        helper(root, res);
+        return res;
+    }
+    
+private:
+    void helper(TreeNode* node, vector<int> &res) {
+        if (!node) return;
+        
+        helper(node->left, res);
+        helper(node->right, res);
+        res.push_back(node->val);
+    }
+};
+
+//iterative, O(n)/O(n)
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        //stack based, root-right-left and reverse
+        if (!root) return {};
+        
+        vector<int> res;
+        stack<TreeNode*> stack;
+        stack.push(root);
+        while (!stack.empty()) {
+            TreeNode *cur = stack.top();
+            stack.pop();
+            res.push_back(cur->val);
+            if (cur->left) stack.push(cur->left);
+            if (cur->right) stack.push(cur->right);
+        }
+        
+        //reverse res
+        reverse(res.begin(), res.end());
+        return res;
+    }
+};
