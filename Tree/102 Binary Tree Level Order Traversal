@@ -1,0 +1,61 @@
+Given a binary tree, return the level order traversal of its nodes' values. (ie, from left to right, level by level).
+
+For example:
+Given binary tree [3,9,20,null,null,15,7],
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its level order traversal as:
+[
+  [3],
+  [9,20],
+  [15,7]
+]
+
+//recursive, O(n)/O(n)
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        vector<vector<int>> res;
+        helper(root, 0, res);
+        return res;        
+    }
+private:
+    void helper(TreeNode* node, int level, vector<vector<int>> &res) {
+        if (!node) return;
+        if (level == res.size()) 
+            res.push_back(vector<int> {});
+        res[level].push_back(node->val);
+        helper(node->left, level + 1, res);
+        helper(node->right, level + 1, res);
+    }
+};
+
+//iterative, queue based, O(n)/O(n)
+class Solution {
+public:
+    vector<vector<int>> levelOrder(TreeNode* root) {
+        //queue based iterative
+        if (!root) return {};
+        
+        vector<vector<int>> res;
+        queue<TreeNode*> levelNodes;
+        levelNodes.push(root);
+        
+        while (!levelNodes.empty()) {
+            int n = levelNodes.size();
+            vector<int> levelVal;
+            for (int i = 0; i < n; ++i) {
+                TreeNode *cur = levelNodes.front();
+                levelNodes.pop();
+                levelVal.push_back(cur->val);
+                if (cur->left) levelNodes.push(cur->left);
+                if (cur->right) levelNodes.push(cur->right);
+            }
+            res.push_back(levelVal);
+        }
+        return res;     
+    }
+};
