@@ -1,0 +1,52 @@
+Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+
+For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+
+Two trees are a mirror reflection of each other if:
+     Their two roots have the same value.
+     The right subtree of each tree is a mirror reflection of the left subtree of the other tree.
+ 
+//recursive
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {   
+        return isMirror(root, root);
+    }
+    
+    bool isMirror(TreeNode* p, TreeNode* q) {
+        if (!p || !q) return p == q;
+        return (p->val == q->val) &&
+                isMirror(p->left, q->right) &&
+                isMirror(p->right, q->left);
+    }
+};
+
+//iterative
+class Solution {
+public:
+    bool isSymmetric(TreeNode* root) {
+        queue<TreeNode*> q;
+        q.push(root);
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode *t1 = q.front();
+            q.pop();
+            TreeNode *t2 = q.front();
+            q.pop();
+            if (!t1 ^ !t2 || ((t1 && t2) && (t1->val != t2->val))) return false;
+            if (t1 && t2) {
+                q.push(t1->left);
+                q.push(t2->right);
+                q.push(t1->right);
+                q.push(t2->left);
+            }
+        }
+        return true;
+    }
+};
