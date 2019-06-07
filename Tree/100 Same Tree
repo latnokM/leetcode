@@ -1,0 +1,34 @@
+Given two binary trees, write a function to check if they are the same or not.
+
+Two binary trees are considered the same if they are structurally identical and the nodes have the same value.
+
+//recursive, O(n)
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        if (!p || !q) return q == p;
+        return (p->val == q->val) &&
+                isSameTree(p->left, q->left) &&
+                isSameTree(p->right, q->right);
+    }
+};
+
+//DFS iterative, O(n)
+class Solution {
+public:
+    bool isSameTree(TreeNode* p, TreeNode* q) {
+        stack<pair<TreeNode*, TreeNode*>> s;
+        s.push(pair<TreeNode*, TreeNode*>(p, q));
+        while (!s.empty()) {
+            TreeNode *m = s.top().first;
+            TreeNode *n = s.top().second;
+            if ((!m ^ !n) || ((m && n) && (m->val != n->val))) return false;
+            s.pop();
+            if (m && n) {
+                s.push(pair<TreeNode*, TreeNode*>(m->right, n->right));
+                s.push(pair<TreeNode*, TreeNode*>(m->left, n->left));
+            }
+        }
+        return true;
+    }
+};
