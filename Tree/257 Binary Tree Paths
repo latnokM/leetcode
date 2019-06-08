@@ -1,0 +1,65 @@
+Given a binary tree, return all root-to-leaf paths.
+
+Note: A leaf is a node with no children.
+
+Example:
+
+Input:
+
+   1
+ /   \
+2     3
+ \
+  5
+
+Output: ["1->2->5", "1->3"]
+
+Explanation: All root-to-leaf paths are: 1->2->5, 1->3
+
+//recursive, O(n)/O(n)
+class Solution {
+public:
+    vector<string> binaryTreePaths(TreeNode* root) {
+        vector<string> res;
+        if(root) constructPath(root, "", res);
+        return res;        
+    }
+    
+    void constructPath(TreeNode* node, string path, vector<string> &res) {
+        path += to_string(node->val);
+        if (!node->left && !node->right) {
+            //leaf node
+            res.push_back(path);
+        } else {
+            path += "->";
+            if (node->left) constructPath(node->left, path, res);
+            if (node->right) constructPath(node->right, path, res);
+        }
+    }
+};
+
+//interative O(n)
+class Solution {
+public:
+    vector<string> binaryTreePaths(TreeNode* root) {
+        if (!root) return {};
+        
+        typedef pair<TreeNode*, string> path;
+        vector<string> res;
+        stack<path> s;
+        s.push(path(root, to_string(root->val)));
+        while (!s.empty()) {
+            TreeNode* cur = s.top().first;
+            string p = s.top().second;
+            s.pop();
+            if (!cur->left && !cur->right) {
+                res.push_back(p);
+            } else {
+                p += "->";
+                if (cur->right) s.push(path(cur->right, p + to_string(cur->right->val)));
+                if (cur->left) s.push(path(cur->left, p + to_string(cur->left->val)));
+            }
+        }
+        return res;
+    }
+};
