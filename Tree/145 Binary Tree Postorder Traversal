@@ -32,7 +32,7 @@ private:
     }
 };
 
-//iterative, O(n)/O(n)
+//iterative, O(nlgn)/O(n), reverse
 class Solution {
 public:
     vector<int> postorderTraversal(TreeNode* root) {
@@ -53,5 +53,32 @@ public:
         //reverse res
         reverse(res.begin(), res.end());
         return res;
+    }
+};
+
+//iterative, O(n)
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        stack<TreeNode*> s;
+        TreeNode *cur = root, *pre = NULL;
+        while (cur || !s.empty()) {
+            while (cur) {
+                s.push(cur);
+                cur = cur->left;
+            }
+            cur = s.top();
+            if (cur->right && cur->right != pre) {
+                cur = cur->right;
+            } else {
+                //done visiting left and right subtree, visit cur node
+                res.push_back(cur->val);
+                s.pop();
+                pre = cur;
+                cur = NULL;
+            }
+        }
+        return res;        
     }
 };
