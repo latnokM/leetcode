@@ -43,4 +43,25 @@ public:
     }
 };
 
-//iterative
+//iterative BFS
+class Solution {
+public:
+    vector<vector<int>> pathSum(TreeNode* root, int sum) {
+        if (!root) return {};
+        
+        vector<vector<int>> res;
+        queue<tuple<TreeNode*, vector<int>, int>> q;
+        q.push({root, vector<int>{}, sum}); 
+        while (!q.empty()) {
+            auto cur = q.front();
+            q.pop();
+            TreeNode *curNode = get<0>(cur);
+            get<1>(cur).push_back(curNode->val);
+            if (!curNode->left && !curNode->right && curNode->val == get<2>(cur))
+                res.push_back(get<1>(cur));
+            if (curNode->left) q.push({curNode->left, get<1>(cur), get<2>(cur) - curNode->val});
+            if (curNode->right) q.push({curNode->right, get<1>(cur), get<2>(cur) - curNode->val});
+        }
+        return res;        
+     }
+};
