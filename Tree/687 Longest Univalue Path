@@ -1,0 +1,41 @@
+Given a binary tree, find the length of the longest path where each node in the path has the same value. 
+This path may or may not pass through the root.
+
+The length of path between two nodes is represented by the number of edges between them.
+
+Example 1:
+
+Input:
+
+              5
+             / \
+            4   5
+           / \   \
+          1   1   5
+Output: 2
+
+class Solution {
+public:
+    int longestUnivaluePath(TreeNode* root) {
+        int res = 0;
+        dfs(root, res);
+        return res;        
+    }
+    
+    int dfs(TreeNode* node, int& res) {
+        if (node == NULL) return 0;
+        int l = dfs(node->left, res);
+        int r = dfs(node->right, res);
+        int lres = (node->left && node->left->val == node->val) ? l + 1 : 0;
+        int rres = (node->right && node->right->val == node->val) ? r + 1 : 0;
+        res = max(res, lres + rres);
+        return max(lres, rres);
+    }
+};
+
+l is the length of single direction Longest-Univalue-Path start from left-child,
+r is the length of single direction Longest-Univalue-Path start from right-child,
+resl is the length of single direction Longest-Univalue-Path start from parent go left,
+resr is the length of single direction Longest-Univalue-Path start from parent go right.
+int dfs(node) returns the Longest-Univalue-Path-Start-At that node, and update the result of Longest-Univalue-Path-Across that node through side effect.
+It is really hard to name those variables to reflect these concept.
