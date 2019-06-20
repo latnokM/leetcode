@@ -1,0 +1,149 @@
+Definition: self-balacing BST where difference between heights of left and right subtrees cannot be more than one for all nodes
+
+time complexity: O(lgn), faster lookup than RB tree
+application: database transactions
+
+// AVL tree node
+class TreeNode {
+public:
+  int val;
+  TreeNode *left;
+  TreeNode *right;
+  int height;
+  TreeNode(int x) : val(x), left(NULL), right(NULL), height(1) {}
+}
+
+int height(TreeNode* node) {
+  if (node == NULL) return 0;
+  return node->height;
+}
+
+int getBalance(TreeNode* node) {
+  if (node == NULL) return 0;
+  return height(node->left) - height(node->right);
+}
+
+TreeNode* rightRotate(TreeNode* x) {
+  TreeNode *y = x->left;
+  TreeNode *z = y->right;
+  
+  y->right = x;
+  x->left = z;
+  
+  x->height = 1 + max(height(x->left), height(x->right));
+  y->height = 1 + max(height(y->left), height(y->right));
+  return y;
+}
+
+TreeNode *leftRotate(TreeNode* x) {
+  TreeNode *y = x->right;
+  TreeNode *z = y->left;
+  
+  y->left = x;
+  x->right = z;
+  
+  x->height = 1 + max(height(x->left), height(x->right));
+  y->height = 1 + max(height(y->left), height(y->right));
+  return y;
+}
+
+//insert a new val in subtree rooted with node, return new root of subtree
+TreeNode* insert(TreeNode* node, int val) {
+  //1.normal BST insertion
+  if (node == NULL) return new TreeNode(val);
+  
+  if (val < node->val)
+    node->left = insert(node->left, val);
+  else if (val > node->val)
+    node->right = insert(node->right, val);
+  else return node;
+  
+  //2. update height of this ancestor node
+  node->height = 1 + max(height(node->left), height(node->right));
+  
+  //3. check balance factor of this node see if this node became unbalanced
+  int balance = getBalance(node);
+  
+  //if unbalanced, there are 4 cases
+  //left left
+  if (balance > 1 && val < node->left->val)
+    return rightRotate(node);
+  // right right
+  if (balance < -1 && val > node->right->val)
+    return leftRotate(node);
+  // left right
+  if (balance > 1 && val > node->left->val) {
+    node->left = leftRotate(node->left);
+    return rightRotate(node);
+  }
+  // right left
+  if (balance < -1 && val < node->right->val) {
+    node->right = rightRotate(node->right);
+    return leftRotate(node);
+  }
+  return node;
+}
+
+TreeNode* minValNode(TreeNode* node) {
+  TreeNode *cur = node;
+  while (cur->left != NULL)
+    cur = cur->left;
+  return cur;
+}
+
+//delete node with val from subtree with given root, return root of modified subtree
+TreeNode* delete(TreeNode* root, int val) {
+  //1. normal BST delete
+  if (root == NULL) return NULL;
+  if (val < root->val)
+    root->left = delete(root->left, val);
+  else if (val > root->val)
+    root->right = delete(root->right, val);
+  // this is the node to be deleted
+  else {
+    //node with one child or no child
+    if (root->left == NULL || root->right == NULL) {
+      TreeNode *tmp = root->left ? root->left : root->right;
+      if (tmp == NULL) {
+        tmp = root;
+        root = NULL;
+      } else {
+        *root = *tmp; //copy the content of non empty child
+      }
+      delete tmp;
+    } else {
+      //node with two children, get the inorder successor(smallest in right subtree)
+      TreeNode *tmp = minValNode(root->right);
+      //copy inorder successor's data to this node
+      root->val = tmp->val;
+      //delete the inorder successor
+      root->right = delete(root->right, tmp->val);
+    }
+  }
+  
+  if (root == NULL) return NULL;
+  
+  //2. update height of current node
+  root->height = 1 + max(height(root->left), height(root->right));
+  
+  //3. check balance factor and rotate if needed
+  int balance = getBalance(root);
+  
+  //left left
+  if (balance > 1 && getBalance(root->left) >= 0)
+    return rightRotate(root);
+  //left right
+  if (balance > 1 && getBalance(root->left) < 0) {
+    root->left = leftRotate(root->left);
+    return rightRotate(root);
+  }
+  //right right
+  if (balance < -1 && getBalance(root->right) <= 0)
+    return leftRotate(root);
+  //right left
+  if (balance < -1 && getBalance(root->right) > 0) {
+    root->right = rightRotate(root->right);
+    return leftRotate(root);
+  }
+  return root;
+}
