@@ -1,0 +1,132 @@
+Definition:
+1. every node has color either black or red
+2. root is always black, NULL is black
+3. no two adjacent red nodes
+4. every path from a node to any of its descendant NULL node has the same number of black nodes
+
+compare with AVL tree:
+AVL is more balanced, faster lookup, but insertion and deletion is slower than red-black.
+application: map, set
+
+A chain of 3 nodes is not possible in Red-Black tree.
+Black height is number of black nodes on a path from root to a leaf. Leaf nodes are counted black nodes.
+Red-Black Tree of height h has black height >= h/2
+Every Red-Black tree with n nodes has height <= 2*lg(n + 1)
+
+enum color {RED, BLACK};
+
+struct TreeNode {
+  int val;
+  bool color;
+  TreeNode *left, *right, *parent;
+  TreeNode(int val) : val(val), left(NULL), right(NULL), parent(NULL) {}
+}
+
+TreeNode* insert(TreeNode* root, int val) {
+  TreeNode *pt = new TreeNode(val);
+  root = BSTInsert(root, pt);
+  fixViolation(root, pt);
+  return root;
+}
+
+TreeNode* BSTInsert(TreeNode* root, TreeNode* pt) {
+  //1.normal BST insertion
+  if (root == NULL) return pt;
+  
+  if (pt->val < root->val) {
+    root->left = insert(root->left, pt);
+    root->left->parent = root;
+  } else if (pt->val > root->val) {
+    root->right = insert(root->right, pt);
+    root->right->parent = root;
+  } 
+  return root;
+}
+
+void rotateLeft(TreeNode* &root, TreeNode* &x) {
+  TreeNode *y = x->right;
+  TreeNode *z = y->left;
+  x->right = z;
+  if (z != NULL) z->parent = x;
+  y->parent = x->parent;
+  
+  if (x->parent == NULL) root = y;
+  else if (x == x->parent->left) x->parent->left = y;
+  else  x->parent->right = y;
+  
+  y->left = x;
+  x->parent = y;
+}
+
+void rotateRight(TreeNode* &root, TreeNode* &x) {
+  TreeNode *y = x->left;
+  TreeNode *z = y->right;
+  x->left = z;
+  if (z != NULL) z->parent = y;
+  y->parent = x->parent;
+  
+  if (x->parent == NULL) root = y;
+  else if (x == x->parent->left) x->parent->left = y;
+  else x->parent->right = y;
+  
+  y->right = x;
+  x->parent = y;
+}
+
+void fixViolation(TreeNode* &root, TreeNode* &pt) {
+  TreeNode *p = NULL, *g = NULL;
+  
+  while ((pt != root) && (pt->color == RED) && (pt->parent->color == RED)) {
+    p = pt->parent;
+    g = pt->parent->parent;
+    
+    //Case A: parent of pt is left child of grandparent of pt
+    if (p == g->left) {
+      TreeNode *u = g->right;
+      //Case 1: uncle of pt is red, only recolor
+      if (u != NULL && u->color == RED) {
+        g->color = RED;
+        p->color = BLACK;
+        u->color = BLACK;
+        pt = g; //next to check g
+      } else {
+        //case 2: LR case, left rotate
+        if (pt == p->right) {
+          rotateLeft(root, p);
+          pt = p;
+          p = pt->parent;
+        }
+        
+        //case 3: LL case, right rotate
+        rotateRight(root, g);
+        swap(p->color, g->color);
+        pt = p;
+      }
+    } else {
+      //Case B: parent of pt is right child of g of pt
+      TreeNode *u = g->left;
+      //Case 1: uncle of pt is red, only recolor
+      if (u != NULL && u->color == RED) {
+        g->color = RED;
+        p->color = BLACK;
+        u->color = BLACK;
+        pt = g;
+      } else {
+        //case 2: RL case, right rotate
+        if (pt == p->left) {
+          rotateRight(root, p);
+          pt = p;
+          p = pt->parent;
+        }
+        
+        //case 3: RR case, left rotate
+        rotateLeft(root, g);
+        swap(p->color, g->color);
+        pt = p;
+      }
+    }
+  }
+  root->color = BLACK;
+}
+
+
