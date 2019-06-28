@@ -1,0 +1,53 @@
+Given a binary tree, find the largest subtree which is a Binary Search Tree (BST), where largest means subtree with largest 
+number of nodes in it.
+
+Note:
+A subtree must include all of its descendants.
+
+Example:
+
+Input: [10,5,15,1,8,null,7]
+
+   10 
+   / \ 
+  5  15 
+ / \   \ 
+1   8   7
+
+Output: 3
+Explanation: The Largest BST Subtree in this case is the highlighted one.
+             The return value is the subtree's size, which is 3.
+Follow up:
+Can you figure out ways to solve it with O(n) time complexity?
+
+//O(n). O(h)
+class Solution {
+public:
+    int largestBSTSubtree(TreeNode* root) {
+        int res = 0;
+        TreeNode *minNode = nullptr, *maxNode = nullptr;
+        isValidBST(root, minNode, maxNode, res);
+        return res;
+    }
+    
+    bool isValidBST(TreeNode* node, TreeNode*& minNode, TreeNode*& maxNode, int& res) {
+        if (node == nullptr) return true;
+        int lcount = 0, rcount = 0;
+        TreeNode *lmin = nullptr, *lmax = nullptr, *rmin = nullptr, *rmax = nullptr;
+        bool isLeft = isValidBST(node->left, lmin, lmax, lcount);
+        bool isRight = isValidBST(node->right, rmin, rmax, rcount);
+        
+        if (isLeft && isRight) {
+            if ((lmax == nullptr || node->val > lmax->val) && (rmin == nullptr || node->val < rmin->val)) {
+                //cur node forms a BST
+                minNode = node->left ? lmin : node;
+                maxNode = node->right ? rmax : node;
+                res = lcount + rcount + 1;
+                return true;
+            }
+        }
+        
+        res = max(lcount, rcount);
+        return false;
+    }
+};
