@@ -1,0 +1,45 @@
+Given a binary tree
+
+struct Node {
+  int val;
+  Node *left;
+  Node *right;
+  Node *next;
+}
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+Note:
+
+You may only use constant extra space.
+Recursive approach is fine, implicit stack space does not count as extra space for this problem.
+
+//O(n)
+class Solution {
+public:
+    Node* connect(Node* root) {
+        //track last node in linked list of child level
+        Node *cur = root;
+        Node head(0);
+        while (cur) {
+            Node *tail = &head;
+            while (cur) {
+                //iterate each node and nodes in same level, link next level
+                if (cur->left) {
+                    tail->next = cur->left;
+                    tail = cur->left;
+                }
+                if (cur->right) {
+                    tail->next = cur->right;
+                    tail = cur->right;
+                }
+                cur = cur->next;
+            }
+            //move to next level
+            cur = head.next;
+            head.next = nullptr;
+        }
+        return root;
+    }
+};
