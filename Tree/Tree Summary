@@ -1,0 +1,73 @@
+Tree Traversal  - DFS(stack) BFS(queue)
+144	Binary Tree Preorder Traversal  -  stack/morris
+94	Binary Tree Inorder Traversal   -  stack/morris
+145	Binary Tree Postorder Traversal  -  stack(reverse)
+102	Binary Tree Level Order Traversal  -  queue
+107 Binary Tree Level Order Traversal II  - queue and reverse res
+589 N-ary Tree Preorder Traversal  -   stack
+429 N-ary Tree Level Order Traversal  -  queue
+100 Same Tree  -  BFS/DFS, pair<TreeNode*, TreeNode*>
+101 Symmetric Tree  - BFS/DFS, p->left == q->right and p->right == q->left
+103 Binary Tree Zigzag Level Order Traversal  - BFS, create fixed size vector for each level, index = reverse ? n - i - i : i
+104 Maximum Depth of Binary Tree  - BFS/DFS
+111 Minimum Depth of Binary Tree  - DFS/BFS, stop once visit leaf
+110 Balanced Binary Tree  - DFS recursive, O(n), height = 1 + max(leftHeight, rightHeight) or -1(diff > 1)
+114 Flatten Binary Tree to Linked List  - postorder DFS, O(n)
+199 Binary Tree Right Side View - BFS, right to left; DFS, depth == res.size O(n)
+250 Count Univalue Subtrees - recursive DFS, unival subtree: node has no child or all children are unival subtree, value == children val
+297 Serialize and Deserialize Binary Tree - use ostringstream for serialize and istringstream for deserialize
+298 Binary Tree Longest Consecutive Sequence - DFS
+314 Binary Tree Vertical Order Traversal - BFS + hashtable, track min and max col
+337 House Robber III - DFS, val + grandchild or left + right
+366 Find Leaves of Binary Tree - DFS, height of node is the distance to its deepest leaf
+637 Average of Levels in Binary Tree - BFS
+671 Second Minimum Node In a Binary Tree - DFS
+687 Longest Univalue Path - DFS, l, r, lres, rres
+979 Distribute Coins in Binary Tree - DFS postorder, track excess number of coins in subtree
+
+Path Problems - recursive, divide conquer
+112 Path Sum  - DFS check each node with remain target, O(n)
+113 Path Sum II  - DFS + backtracing, BFS store path and sum for each node O(n)
+129 Sum Root to Leaf Numbers  - DFS, prev * 10 + cur->val, O(n)
+124 Binary Tree Maximum Path Sum - DFS postorder, cur can be the hightest node in the path or extend the path use left or right subtree
+257 Binary Tree Paths - DFS + back tracking
+
+Tree Conversion 
+105 Construct Binary Tree from Preorder and Inorder Traversal  - hash table + DFS recursive, 
+                                                                 iterate preorder array and divide conquer inorder array
+106 Construct Binary Tree from Inorder and Postorder Traversal - hash table + DFS recursive, iter postorder from back to front
+108 Convert Sorted Array to Binary Search Tree  - recursive + binary search  O(n)/O(lgn)
+109 Convert Sorted List to Binary Search Tree - 1. convert linked list to array, O(n)/O(n)
+                                                2. two pointer + binary search, find mid node and split list into halves O(nlgn)/O(lgn)
+                                                3. inorder simulation, move *head = (*head)->next, O(n)/O(lgn)
+226 Invert Binary Tree - BFS/DFS swap left and right for each node
+
+Other 
+116 Populating Next Right Pointers in Each Node -  next pointer act as queue, connect next level, O(n)
+117 Populating Next Right Pointers in Each Node II - create dummy head of link list for child level, track tail node in list O(n)
+156 Binary Tree Upside Down - recursive change connection for left most nodes from bottom to top, O(h)
+222 Count Complete Tree Nodes - O(lgn^2) binary search leaf node, n = 2^(h + 1) - 1
+331 Verify Preorder Serialization of a Binary Tree - track available spot while adding node, add every node reduce spot by 1, 
+                                                     add non-null node also increase 2 spots, spot cannot be negative anytime
+572 Subtree of Another Tree - O(m*n) isSame(s, t) || isSubtree(s->left, t) || isSubtree(s->right, t)
+
+BST - inorder ascending
+96 Unique Binary Search Trees - DP, O(n^2), G[i] = G[j - 1]*G[i - j] for all j in [1, i]
+95 Unique Binary Search Trees II - DP, memo[i][j][n] store BST with root in [i,j]
+98	Validate Binary Search Tree - inorder or recursive, track min and max node
+99	Recover Binary Search Tree - morris traversal inorder, find first and second node, they can be consecutive
+235	Lowest Common Ancestor of a Binary Search Tree  - binary search, LCA value betwen two nodes
+236	Lowest Common Ancestor of a Binary Tree  - if (root == nullptr || root == p || root == q) return root;
+173	Binary Search Tree Iterator  - use stack store left nodes of right child, next smallest node on will be on stack top
+230	Kth Smallest Element in a BST  - inorder traversal, O(h + k), optimization: store cnt of subtree nodes in each node, divide conquer
+                                     to determine kth smallest in left or right
+255 Verify Preorder Sequence in Binary Search Tree - preorder traversal while maintain BST attribute, track a low val
+270	Closest Binary Search Tree Value  - binary search O(h)
+272	Closest Binary Search Tree Value II - 1. inorder traversal, deque(k values) and stack, sliding window O(n)/O(h + k) 
+                                          2. build pred and succ stacks in O(lgn) Each call to getNextPred/Succ has an amortized 
+                                             cost of O(1), since every node is pushed and popped at most once.O(lgn + k), O(lgn + k)
+285	Inorder Successor in BST  - O(h) either smallest node in right subtree or lowest ancestor on right
+333 Largest BST Subtree  - O(n) check if left and right subtree are valid BST, update min and max node, also get count of subtree nodes 
+
+self balanced BST: red-black tree, AVL tree implementation, add()/delete()/lookup()
+n-ary tree, trie tree
