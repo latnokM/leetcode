@@ -1,0 +1,67 @@
+Given a reference of a node in a connected undirected graph, return a deep copy (clone) of the graph. 
+Each node in the graph contains a val (int) and a list (List[Node]) of its neighbors.
+
+Note:
+
+The number of nodes will be between 1 and 100.
+The undirected graph is a simple graph, which means no repeated edges and no self-loops in the graph.
+Since the graph is undirected, if node p has node q as neighbor, then node q must have node p as neighbor too.
+You must return the copy of the given node as a reference to the cloned graph.
+
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+
+    Node() {}
+
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+
+
+//DFS
+class Solution {
+public:
+    Node* cloneGraph(Node* node) {
+        if (node == nullptr) return nullptr;
+        if (copies.find(node) == copies.end()) {
+            copies[node] = new Node(node->val, {});
+            for (auto &n : node->neighbors)
+                copies[node]->neighbors.push_back(cloneGraph(n));
+        }
+        return copies[node];
+    } 
+private:
+    unordered_map<Node*, Node*> copies;
+};
+
+//BFS
+class Solution {
+public:
+    Node* cloneGraph(Node* node) {
+        if (node == nullptr) return nullptr;
+        queue<Node*> q;
+        q.push(node);
+        copies[node] = new Node(node->val, {});
+        
+        while (!q.empty()) {
+            Node *cur = q.front();
+            q.pop();
+            for (auto &n : cur->neighbors) {
+                if (copies.find(n) == copies.end()) {
+                    copies[n] = new Node(n->val, {});
+                    q.push(n);
+                }
+                copies[cur]->neighbors.push_back(copies[n]);
+            }
+        }
+        return copies[node];
+    }
+private:
+    unordered_map<Node*, Node*> copies;
+};
