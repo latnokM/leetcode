@@ -69,5 +69,10 @@ BST - inorder ascending
 285	Inorder Successor in BST  - O(h) either smallest node in right subtree or lowest ancestor on right
 333 Largest BST Subtree  - O(n) check if left and right subtree are valid BST, update min and max node, also get count of subtree nodes 
 
+Trie	
+208	Implement Trie (Prefix Tree)
+211	Add and Search Word - Data structure design
+212	Word Search II  - build trie using words, dfs board O(mn*l), m*n board size, l is word length
+
 self balanced BST: red-black tree, AVL tree implementation, add()/delete()/lookup()
 n-ary tree, trie tree
