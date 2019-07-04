@@ -1,0 +1,105 @@
+Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real number 
+(floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0.
+
+Example:
+Given a / b = 2.0, b / c = 3.0.
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? .
+return [6.0, 0.5, -1.0, 1.0, -1.0 ].
+
+The input is: vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries , 
+where equations.size() == values.size(), and the values are positive. This represents the equations. Return vector<double>.
+
+According to the example above:
+
+equations = [ ["a", "b"], ["b", "c"] ],
+values = [2.0, 3.0],
+queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ]. 
+ 
+
+The input is always valid. You may assume that evaluating the queries will result in no division by zero and there is no contradiction.
+
+// resursive using hash map, 
+class Solution {
+public:
+    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+        vector<double> res;
+        //store equations to map
+        for (int i = 0; i < equations.size(); i++) {
+            //equations[i] : {"a", "b"}
+            map[equations[i][0]][equations[i][1]] = values[i];
+            map[equations[i][1]][equations[i][0]] = 1.0 / values[i];
+        }
+        
+        for (const auto& query : queries) {
+            //use hash set to store visited string for each query
+            unordered_set<string> visited;
+            double t = helper(query[0], query[1], visited);
+            res.push_back(t > 0.0 ? t : -1);
+        }
+        return res;
+    }
+    
+    double helper(string up, string down, unordered_set<string>& visited) {
+        if (map[up].count(down)) return map[up][down];
+        for (const auto& a : map[up]) {
+            if (visited.count(a.first)) continue;
+            visited.insert(a.first);
+            double t = helper(a.first, down, visited);
+            if (t > 0.0) return t * a.second;
+        }
+        return -1.0;
+    }
+    
+private:
+    unordered_map<string, unordered_map<string, double>> map;
+    //a / b = 2.0, map[a][b] = 2.0
+};
+
+
+//BFS + hash map
+class Solution {
+public:
+    vector<double> calcEquation(vector<vector<string>>& equations, vector<double>& values, vector<vector<string>>& queries) {
+        vector<double> res;
+        unordered_map<string, unordered_map<string, double>> map;
+        
+        //store equations to map
+        for (int i = 0; i < equations.size(); i++) {
+            map[equations[i][0]][equations[i][1]] = values[i];
+            map[equations[i][1]][equations[i][0]] = 1.0 / values[i];
+        }
+        
+        for (const auto& query : queries) {
+            //if string is not in map
+            if (!map.count(query[0]) || !map.count(query[1])) {
+                res.push_back(-1.0);
+                continue;
+            }
+            queue<pair<string, double>> q;
+            unordered_set<string> visited{query[0]};
+            q.push({query[0], 1.0});
+            bool found = false;
+            while (!found && !q.empty()) {
+                for (int i = 0; i < q.size(); ++i) {
+                    auto t = q.front();
+                    q.pop();
+                    //found res
+                    if (t.first == query[1]) {
+                        found = true;
+                        res.push_back(t.second);
+                        break;
+                    }
+                    //go through t.first's neighbors
+                    for (auto a : map[t.first]) {
+                        if (visited.count(a.first)) continue;
+                        visited.insert(a.first);
+                        a.second *= t.second;
+                        q.push(a);
+                    }
+                }
+            }
+            if (!found) res.push_back(-1.0);
+        }
+        return res;
+    }
+};
