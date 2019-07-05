@@ -1,0 +1,47 @@
+Given n points on a 2D plane, find the maximum number of points that lie on the same straight line.
+
+Example 1:
+
+Input: [[1,1],[2,2],[3,3]]
+Output: 3
+Explanation:
+^
+|
+|        o
+|     o
+|  o  
++------------->
+0  1  2  3  4
+
+//O(n^2)
+class Solution {
+public:
+    int maxPoints(vector<vector<int>>& points) {
+        //two points determine a line, for each point i, check all other points, store
+        //prime {dx, dy}, points on same line should have same P{dx,dy} with point i, use hash map
+        int res = 0;
+        for (int i = 0; i < points.size(); i++) {
+            map<pair<int, int>, int> map;
+            int duplicate = 1; //original point is counted
+            for (int j = i + 1; j < points.size(); j++) {
+                //check if dup points, dup is on same line
+                if (points[i][0] == points[j][0] && points[i][1] == points[j][1]) {
+                    duplicate++;
+                    continue;
+                }
+                int dx = points[j][0] - points[i][0];
+                int dy = points[j][1] - points[i][1];
+                int d = gcd(dx, dy);
+                map[{dx / d, dy / d}]++;
+            }
+            res = max(res, duplicate); //all points are duplicate
+            for (const auto& a : map)
+                res = max(res, a.second + duplicate);
+        }
+        return res;
+    }
+    
+    int gcd(int a, int b) {
+        return b == 0 ? a : gcd(b, a % b);
+    }
+};
