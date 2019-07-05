@@ -1,0 +1,35 @@
+Given n points on a 2D plane, find if there is such a line parallel to y-axis that reflect the given points.
+
+Example 1:
+
+Input: [[1,1],[-1,1]]
+Output: true
+Example 2:
+
+Input: [[1,1],[-1,-1]]
+Output: false
+Follow up:
+Could you do better than O(n2) ?
+
+//O(n)
+class Solution {
+public:
+    bool isReflected(vector<vector<int>>& points) {
+        //find min and max x-value for all points, mid value is the reflection line
+        unordered_map<int, unordered_set<int>> map;
+        int minX = INT_MAX, maxX = INT_MIN;
+        for (const auto& p : points) {
+            minX = min(minX, p[0]);
+            maxX = max(maxX, p[0]);
+            map[p[0]].insert(p[1]);
+        }
+        double mid = (double)(minX + maxX) / 2;
+        for (const auto& p : points) {
+            int t = 2 * mid - p[0];
+            //see if reflection point exist
+            if (!map.count(t) || !map[t].count(p[1]))
+                return false;
+        }
+        return true;
+    }
+};
