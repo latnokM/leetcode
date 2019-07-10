@@ -1,0 +1,73 @@
+You are asked to cut off trees in a forest for a golf event. The forest is represented as a non-negative 2D map, in this map:
+
+0 represents the obstacle can't be reached.
+1 represents the ground can be walked through.
+The place with number bigger than 1 represents a tree can be walked through, and this positive number represents the tree's height.
+ 
+
+You are asked to cut off all the trees in this forest in the order of tree's height - always cut off the tree with lowest height first.
+And after cutting, the original place has the tree will become a grass (value 1).
+
+You will start from the point (0, 0) and you should output the minimum steps you need to walk to cut off all the trees.
+If you can't cut off all the trees, output -1 in that situation.
+
+You are guaranteed that no two trees have the same height and there is at least one tree needs to be cut off.
+
+Example 1:
+
+Input: 
+[
+ [1,2,3],
+ [0,0,4],
+ [7,6,5]
+]
+Output: 6
+
+//O((mn)^2)
+class Solution {
+public:
+    int cutOffTree(vector<vector<int>>& forest) {
+        int m = forest.size(), n = forest[0].size(), res = 0, row = 0, col = 0;
+        vector<vector<int>> trees;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (forest[i][j] > 1) trees.push_back({forest[i][j], i, j});
+            }
+        }
+        sort(trees.begin(), trees.end());
+        for (int i = 0; i < trees.size(); ++i) {
+            int step = bfs(forest, row, col, trees[i][1], trees[i][2]);
+            if (step == -1) return -1;
+            res += step;
+            row = trees[i][1];
+            col = trees[i][2];
+        }
+        return res;
+    }
+    
+    int bfs(vector<vector<int>>& forest, int row, int col, int treeRow, int treeCol) {
+        if (row == treeRow && col == treeCol) return 0;
+        int m = forest.size(), n = forest[0].size(), step = 0;
+        queue<pair<int, int>> q;
+        vector<vector<int>> visited(m, vector<int>(n));
+        vector<vector<int>> dir{{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+        q.push({row, col});
+        visited[row][col] = 1;
+        while (!q.empty()) {
+            ++step;
+            for (int i = q.size(); i > 0; --i) {
+                int r = q.front().first, c = q.front().second;
+                q.pop();
+                for (int j = 0; j < dir.size(); ++j) {
+                    int x = r + dir[j][0], y = c + dir[j][1];
+                    if (x < 0 || x >= m || y < 0 || y >= n || visited[x][y] == 1 || forest[x][y] == 0)
+                        continue;
+                    if (x == treeRow && y == treeCol) return step;
+                    visited[x][y] = 1;
+                    q.push({x, y});
+                }
+            }
+        }
+        return -1;
+    }
+};
