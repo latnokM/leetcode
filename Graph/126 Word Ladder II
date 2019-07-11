@@ -1,0 +1,79 @@
+Given two words (beginWord and endWord), and a dictionary's word list, find all shortest transformation sequence(s) from 
+beginWord to endWord, such that:
+
+Only one letter can be changed at a time
+Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+Note:
+
+Return an empty list if there is no such transformation sequence.
+All words have the same length.
+All words contain only lowercase alphabetic characters.
+You may assume no duplicates in the word list.
+You may assume beginWord and endWord are non-empty and are not the same.
+Example 1:
+
+Input:
+beginWord = "hit",
+endWord = "cog",
+wordList = ["hot","dot","dog","lot","log","cog"]
+
+Output:
+[
+  ["hit","hot","dot","dog","cog"],
+  ["hit","hot","lot","log","cog"]
+]
+Example 2:
+
+Input:
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log"]
+
+Output: []
+
+Explanation: The endWord "cog" is not in wordList, therefore no possible transformation.
+
+class Solution {
+public:
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> dict(wordList.begin(), wordList.end());
+        if (!dict.count(endWord)) return {};
+        
+        vector<vector<string>> res;
+        queue<vector<string>> q;
+        q.push({beginWord});
+        int level = 1, minLevel = INT_MAX;
+        unordered_set<string> visited; //store visited words at same level
+        while (!q.empty()) {
+            vector<string> path = q.front();
+            q.pop();
+            if (path.size() > level) {
+                //reach new level, remove all visited words from dict, because these words should not be visited again
+                for (auto s : visited) dict.erase(s);
+                visited.clear();
+                level = path.size();
+                if (level > minLevel) break;
+            }
+            
+            string word = path.back();
+            for (int i = 0; i < word.size(); ++i) {
+                string newWord = word;
+                for (char c = 'a'; c <= 'z'; ++c) {
+                    newWord[i] = c;
+                    if (dict.count(newWord)) {                        
+                        visited.insert(newWord);
+                        vector<string> newPath = path;
+                        newPath.push_back(newWord);
+                        if (newWord == endWord) {
+                            res.push_back(newPath);
+                            minLevel = level;
+                        } else {    
+                            q.push(newPath);
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
