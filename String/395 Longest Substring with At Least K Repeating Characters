@@ -56,3 +56,33 @@ public:
         return max(max_len, helper(s, i, r, k));  //have not checked last substr yet
     }
 };
+
+//use mask O(n), worst O(n^2)
+class Solution {
+public:
+    int longestSubstring(string s, int k) {
+        //use mask, 26 bit represent 26 letters, 1 means occurrence less than k, otherwise 0
+        //sliding window of size k 
+        int res = 0, i = 0, n = s.size();
+        while (i + k <= n) {
+            vector<int> count(26);
+            int mask = 0, maxIdx = i;
+            //check substr starts at i
+            for (int j = i; j < n; ++j) {
+                int t = s[j] - 'a';
+                count[t]++;
+                if (count[t] < k)
+                    mask |= (1 << t);
+                else 
+                    mask &= (~(1 << t));
+                if (mask == 0) {
+                    //no letter occur less than k times in [i, j]
+                    res = max(res, j - i + 1);
+                    maxIdx = j;
+                }    
+            }
+            i = maxIdx + 1;
+        }
+        return res;
+    }
+};
