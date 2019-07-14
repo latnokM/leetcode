@@ -1,0 +1,86 @@
+String Basics:
+1. str1.append(str2), str1 += str2 faster than str1 = str1 + str2
+2. access element: str[], str.front(), str.back()
+3. modify: str.push_back(char), str.insert(pos, str2), str.erase(pos, len = npos), str.replace(pos, len, str2), str.pop(back)
+4. search: str.find(str2, pos = 0), rfind, str.find_first_of("any char"), find_first_not_of("abc.+"), npos if not found
+5. str.substr(pos, len), str.compare(str2)
+6. remove all occurrences of char in str: str.erase(remove(str.begin(), str.end(), 'a'), str.end());
+7. split a string: 
+     -> use stringstream. 
+        istringstream iss(str); while (getline(iss, token, ',')) {}
+     -> use boost::split
+        string delims = "+,-"; boost::split(vector<string>, str, boost::is_any_of(delims));
+     -> find, find_first_of and substr
+8. ctype: isalnum, isalpha, isdigit, islower, isupper, isxdigit, char c = tolower(c), c= toupper(c)
+     
+Substring questions:  -Sliding Window!!
+3	Longest Substring Without Repeating Characters - hash table store index of last occur of letter, maintain sliding window [left, i], O(n)
+159	Longest Substring with At Most Two Distinct Characters	- hash table store index of last occur, move left to find the first index in hash
+340	Longest Substring with At Most K Distinct Characters - same as two distinct but maintain hash table of size k
+395	Longest Substring with At Least K Repeating Characters	- divide & conquer to check substr split by letters less than k
+424 Longest Repeating Character Replacement
+76	Minimum Window Substring
+30	Substring with Concatenation of All Words
+
+Palindrome: 
+125	Valid Palindrome
+266	Palindrome Permutation
+5	Longest Palindromic Substring
+9	Palindrome Number
+214	Shortest Palindrome
+336	Palindrome Pairs
+131	Palindrome Partitioning
+132	Palindrome Partitioning II
+267	Palindrome Permutation II
+
+Parentheses:
+20	Valid Parentheses
+22	Generate Parentheses
+32	Longest Valid Parentheses
+241	Different Ways to Add Parentheses
+301	Remove Invalid Parentheses
+	
+Subsequence: 
+392	Is Subsequence
+115	Distinct Subsequences
+187	Repeated DNA Sequences
+
+Fundamental:
+28	Implement strStr()
+14	Longest Common Prefix
+58	Length of Last Word
+387	First Unique Character in a String
+383	Ransom Note
+344	Reverse String
+151	Reverse Words in a String
+186	Reverse Words in a String II
+345	Reverse Vowels of a String
+205	Isomorphic Strings
+293	Flip Game
+294	Flip Game II
+290	Word Pattern
+242	Valid Anagram
+49	Group Anagrams
+249	Group Shifted Strings
+87	Scramble String
+179	Largest Number
+6	ZigZag Conversion
+161	One Edit Distance
+38	Count and Say
+358	Rearrange String k Distance Apart
+316	Remove Duplicate Letters
+271	Encode and Decode Strings
+168	Excel Sheet Column Title
+171	Excel Sheet Column Number
+13	Roman to Integer
+12	Integer to Roman
+273	Integer to English Words
+246	Strobogrammatic Number
+247	Strobogrammatic Number II
+248	Strobogrammatic Number III
+	
+Advance:
+68	Text Justification
+65	Valid Number
+157	Read N Characters Given Read4
+158	Read N Characters Given Read4 II - Call multiple times
