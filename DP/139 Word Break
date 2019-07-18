@@ -1,0 +1,91 @@
+Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, determine if s can be segmented into 
+a space-separated sequence of one or more dictionary words.
+
+Note:
+
+The same word in the dictionary may be reused multiple times in the segmentation.
+You may assume the dictionary does not contain duplicate words.
+Example 1:
+
+Input: s = "leetcode", wordDict = ["leet", "code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+Example 2:
+
+Input: s = "applepenapple", wordDict = ["apple", "pen"]
+Output: true
+Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+             Note that you are allowed to reuse a dictionary word.
+Example 3:
+
+Input: s = "catsandog", wordDict = ["cats", "dog", "sand", "and", "cat"]
+Output: false
+
+//recursive + memo O(n^2)
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        vector<int> memo(s.size(), -1);
+        unordered_set<string> set(wordDict.begin(), wordDict.end());
+        return check(s, set, 0, memo);
+    }
+    bool check(string s, unordered_set<string>& set, int start, vector<int>& memo) {
+        if (start >= s.size()) return true;
+        if (memo[start] != -1) return memo[start];
+        for (int i = start + 1; i <= s.size(); ++i) {
+            if (set.count(s.substr(start, i - start)) && check(s, set, i, memo)) {
+                memo[start] = 1;
+                return true;
+            }
+        }
+        memo[start] = 0;
+        return false;
+    }
+};
+
+
+//BFS, O(n^2)
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        //BFS
+        unordered_set<string> set(wordDict.begin(), wordDict.end());
+        queue<int> q;
+        vector<bool> visited(s.size());
+        q.push(0);
+        while (!q.empty()) {
+            int start = q.front();
+            q.pop();
+            if (!visited[start]) {
+                for (int i = start + 1; i <= s.size(); ++i) {
+                    if (set.count(s.substr(start, i - start))) {
+                        q.push(i);
+                        if (i == s.size()) return true;
+                    }
+                }
+                visited[start] = true;
+            }
+        }
+        return false;
+    }
+};
+
+//DP, O(n^2)
+class Solution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        //DP[i] to indicate whether [0, i) can be segmented
+        unordered_set<string> set(wordDict.begin(), wordDict.end());
+        vector<bool> dp(s.size() + 1); //include empty string
+        dp[0] = true;
+        for (int i = 1; i <= s.size(); ++i) {
+            for (int j = 0; j < i; ++j) {
+                if (dp[j] && set.count(s.substr(j, i - j))) {
+                    dp[i] = true;
+                    break;
+                }
+            }
+        }
+        return dp.back();
+    }
+};
